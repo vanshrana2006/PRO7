@@ -38,7 +38,10 @@ class ArxivClient:
             "sortBy": sort_by,
             "sortOrder": "descending",
         }
-        async with httpx.AsyncClient(timeout=self.settings.ARXIV_TIMEOUT_SECONDS) as client:
+        async with httpx.AsyncClient(
+            timeout=self.settings.ARXIV_TIMEOUT_SECONDS,
+            follow_redirects=True,
+        ) as client:
             try:
                 resp = await client.get(self.settings.ARXIV_API_BASE, params=params)
                 resp.raise_for_status()
@@ -52,7 +55,10 @@ class ArxivClient:
 
     async def get_by_id(self, arxiv_id: str) -> ArxivEntry | None:
         params = {"id_list": arxiv_id, "max_results": 1}
-        async with httpx.AsyncClient(timeout=self.settings.ARXIV_TIMEOUT_SECONDS) as client:
+        async with httpx.AsyncClient(
+            timeout=self.settings.ARXIV_TIMEOUT_SECONDS,
+            follow_redirects=True,
+        ) as client:
             try:
                 resp = await client.get(self.settings.ARXIV_API_BASE, params=params)
                 resp.raise_for_status()
