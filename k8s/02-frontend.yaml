@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: researchos-frontend
+  namespace: ai-researchos
+  labels:
+    app: researchos-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: researchos-frontend
+  template:
+    metadata:
+      labels:
+        app: researchos-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ai-researchos-frontend:latest  # replace with your registry path
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: researchos-config
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: researchos-frontend
+  namespace: ai-researchos
+spec:
+  selector:
+    app: researchos-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: ClusterIP
+---
+# Requires an ingress controller (e.g. ingress-nginx) already installed in
+# the cluster. Replace host values with your real domains and point DNS at
+# the controller's external IP/load balancer before this does anything.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: researchos-ingress
+  namespace: ai-researchos
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"  # PDF uploads/downloads
+spec:
+  rules:
+    - host: your-frontend-domain.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: researchos-frontend
+                port:
+                  number: 3000
+    - host: your-backend-domain.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: researchos-backend
+                port:
+                  number: 8000

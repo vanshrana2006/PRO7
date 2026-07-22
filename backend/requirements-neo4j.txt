@@ -1,0 +1,12 @@
+# Optional extras -- NOT installed by default, and NOT part of CI's core
+# test/integration jobs. Only needed if you run scripts/sync_to_neo4j.py.
+#
+# Deliberately kept out of requirements.txt: a version-resolution problem
+# in an optional extra should never be able to break `pip install` for the
+# core platform (which is exactly what would happen if this were merged
+# into requirements.txt and PyPI's available versions ever drifted from
+# what's pinned here). Install explicitly when you need it:
+#
+#   pip install -r requirements-neo4j.txt
+
+neo4j==5.24.0

@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #0a0e17;
+  color: #eaf0f6;
+}
+
+* {
+  scrollbar-color: #2c3648 transparent;
+}
+
+::selection {
+  background-color: rgba(94, 234, 212, 0.25);
+  color: #eaf0f6;
+}
+
+@layer components {
+  /* The core signature surface used throughout the product: a frosted
+     glass panel that lets the constellation background show through. */
+  .glass-panel {
+    @apply bg-void-panel/60 backdrop-blur-glass border border-glass-border rounded-2xl shadow-glass;
+  }
+
+  .glass-panel-raised {
+    @apply bg-void-raised/70 backdrop-blur-glass border border-glass-borderStrong rounded-2xl shadow-glass;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-phosphor text-void px-5 py-2.5 font-sans font-semibold text-sm
+      transition-all duration-200 hover:shadow-glow hover:brightness-110 active:scale-[0.98]
+      disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-glass-borderStrong bg-white/5 text-ink px-5 py-2.5 font-sans font-medium text-sm
+      transition-all duration-200 hover:bg-white/10 hover:border-phosphor/40 active:scale-[0.98]
+      disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl bg-void-panel/80 border border-glass-border px-4 py-3 text-ink placeholder:text-ink-faint
+      font-sans text-sm outline-none transition-colors focus:border-phosphor/50 focus:ring-1 focus:ring-phosphor/30;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.2em] text-phosphor/80;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-white/5 px-3 py-1 text-xs font-mono text-ink-muted;
+  }
+
+  /* Subtle 3D pop on hover -- a light perspective tilt rather than a flat
+     lift, so cards feel like physical glass catching the light. */
+  .tilt-card {
+    @apply transition-transform duration-300 ease-out;
+    transform-style: preserve-3d;
+  }
+  .tilt-card:hover {
+    transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

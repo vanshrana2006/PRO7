@@ -1,0 +1,82 @@
+{
+  "title": "AI ResearchOS - Backend",
+  "uid": "ai-researchos-backend",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request rate by endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (method, path) (rate(researchos_http_requests_total[5m]))",
+          "legendFormat": "{{method}} {{path}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Error rate (5xx) by endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (path) (rate(researchos_http_requests_total{status=~\"5..\"}[5m]))",
+          "legendFormat": "{{path}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Average request latency by endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum by (path) (rate(researchos_http_request_duration_seconds_sum[5m])) / sum by (path) (rate(researchos_http_request_duration_seconds_count[5m]))",
+          "legendFormat": "{{path}} avg"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Max observed latency by endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "researchos_http_request_duration_seconds_max",
+          "legendFormat": "{{method}} {{path}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Total requests (24h)",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum(increase(researchos_http_requests_total[24h]))"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Status code breakdown",
+      "type": "piechart",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum by (status) (researchos_http_requests_total)",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    }
+  ]
+}

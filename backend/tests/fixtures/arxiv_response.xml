@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <link href="http://export.arxiv.org/api/query?search_query=all:graph%20neural%20networks" rel="self" type="application/atom+xml"/>
+  <title type="text">ArXiv Query: search_query=all:graph neural networks</title>
+  <id>http://arxiv.org/api/query</id>
+  <updated>2026-07-18T00:00:00-04:00</updated>
+  <opensearch:totalResults>2</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <entry>
+    <id>http://arxiv.org/abs/1609.02907v4</id>
+    <updated>2017-02-22T18:59:35Z</updated>
+    <published>2016-09-09T15:22:39Z</published>
+    <title>Semi-Supervised Classification with Graph Convolutional Networks</title>
+    <summary>  We present a scalable approach for semi-supervised learning on
+graph-structured data that is based on an efficient variant of convolutional
+neural networks which operate directly on graphs.
+</summary>
+    <author>
+      <name>Thomas N. Kipf</name>
+    </author>
+    <author>
+      <name>Max Welling</name>
+    </author>
+    <arxiv:primary_category xmlns:arxiv="http://arxiv.org/schemas/atom" term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <link href="http://arxiv.org/abs/1609.02907v4" rel="alternate" type="text/html"/>
+    <link title="pdf" href="http://arxiv.org/pdf/1609.02907v4" rel="related" type="application/pdf"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1710.10903v3</id>
+    <updated>2018-02-04T17:59:44Z</updated>
+    <published>2017-10-30T18:41:15Z</published>
+    <title>Graph Attention Networks</title>
+    <summary>  We present graph attention networks (GATs), novel neural network
+architectures that operate on graph-structured data, leveraging masked
+self-attentional layers.
+</summary>
+    <author>
+      <name>Petar Velickovic</name>
+    </author>
+    <author>
+      <name>Guillem Cucurull</name>
+    </author>
+    <author>
+      <name>Arantxa Casanova</name>
+    </author>
+    <arxiv:primary_category xmlns:arxiv="http://arxiv.org/schemas/atom" term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <link href="http://arxiv.org/abs/1710.10903v3" rel="alternate" type="text/html"/>
+    <link title="pdf" href="http://arxiv.org/pdf/1710.10903v3" rel="related" type="application/pdf"/>
+  </entry>
+</feed>

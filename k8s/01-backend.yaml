@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: researchos-backend-data
+  namespace: ai-researchos
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: researchos-backend
+  namespace: ai-researchos
+  labels:
+    app: researchos-backend
+spec:
+  # IMPORTANT: replicas is 1 because the default DATABASE_URL is SQLite on
+  # a single ReadWriteOnce volume -- multiple pods writing to the same
+  # SQLite file concurrently will corrupt it. Set DATABASE_URL to a
+  # Postgres DSN (see backend/.env.example) and drop the PVC/volumeMounts
+  # below before scaling this past 1 replica; the app code needs no
+  # changes for that since only dialect-agnostic SQLAlchemy is used.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: researchos-backend
+  template:
+    metadata:
+      labels:
+        app: researchos-backend
+    spec:
+      containers:
+        - name: backend
+          image: ai-researchos-backend:latest  # replace with your registry path
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: researchos-config
+            - secretRef:
+                name: researchos-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: researchos-backend-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: researchos-backend
+  namespace: ai-researchos
+spec:
+  selector:
+    app: researchos-backend
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

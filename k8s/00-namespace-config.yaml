@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-researchos
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: researchos-config
+  namespace: ai-researchos
+data:
+  ENVIRONMENT: "production"
+  DEBUG: "false"
+  DATABASE_URL: "sqlite+aiosqlite:///./data/researchos.db"
+  PDF_STORAGE_DIR: "./data/pdfs"
+  CORS_ORIGINS: '["https://your-frontend-domain.example"]'
+  RATE_LIMIT_CAPACITY: "120"
+  RATE_LIMIT_REFILL_PER_SECOND: "2.0"
+  REQUIRE_API_AUTH: "false"
+  NEXT_PUBLIC_API_URL: "https://your-backend-domain.example"
+  # Optional -- point at an OTLP collector to enable tracing (off, zero
+  # overhead, if left empty). See observability/README.md.
+  OTEL_EXPORTER_OTLP_ENDPOINT: ""
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: researchos-secrets
+  namespace: ai-researchos
+type: Opaque
+stringData:
+  # Replace with real values before applying, or manage via your cluster's
+  # secret manager (Sealed Secrets, External Secrets Operator, etc). Empty
+  # values are fine -- every one of these is optional, per the platform's
+  # "no credentials required to run" design (see docs/ARCHITECTURE.md).
+  ANTHROPIC_API_KEY: ""
+  SEMANTIC_SCHOLAR_API_KEY: ""
+  API_AUTH_SECRET: ""

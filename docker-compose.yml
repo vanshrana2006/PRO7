@@ -1,0 +1,88 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/data
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=sqlite+aiosqlite:///./data/researchos.db
+      - PDF_STORAGE_DIR=./data/pdfs
+      - CORS_ORIGINS=["http://localhost:3000"]
+      - RATE_LIMIT_CAPACITY=120
+      - RATE_LIMIT_REFILL_PER_SECOND=2.0
+      - REQUIRE_API_AUTH=${REQUIRE_API_AUTH:-false}
+      - API_AUTH_SECRET=${API_AUTH_SECRET:-}
+      - SEMANTIC_SCHOLAR_API_KEY=${SEMANTIC_SCHOLAR_API_KEY:-}
+      # Optional -- add your key here (or in backend/.env) to enable
+      # LLM-refined extraction and survey synthesis. Everything works
+      # without it, just with heuristic extraction instead.
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      # Optional -- point at a collector to enable OpenTelemetry tracing.
+      # Off (no tracing overhead) if unset. See observability/README.md.
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # --- Optional observability/graph services, none required for the
+  # platform to run. Start with: docker compose --profile full up ---
+
+  neo4j:
+    image: neo4j:5.24-community
+    profiles: ["full"]
+    ports:
+      - "7474:7474"  # browser UI
+      - "7687:7687"  # bolt
+    environment:
+      - NEO4J_AUTH=neo4j/researchos_dev_only
+    volumes:
+      - neo4j_data:/data
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["full"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    profiles: ["full"]
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+  neo4j_data:
