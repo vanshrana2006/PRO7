@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./data/researchos.db"
 
     # --- External research APIs (no key required) ---
-    ARXIV_API_BASE: str = "http://export.arxiv.org/api/query"
+    ARXIV_API_BASE: str = "https://export.arxiv.org/api/query"
     ARXIV_TIMEOUT_SECONDS: float = 15.0
     ARXIV_MAX_RESULTS_DEFAULT: int = 20
 
