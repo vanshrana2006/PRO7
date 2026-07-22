@@ -64,7 +64,8 @@ jobs:
         run: curl -sf http://localhost:8000/api/health
 
       - name: Live arXiv search
-        run: curl -sf "http://localhost:8000/api/papers/search?q=graph+neural+networks&max_results=2"
+        run: |
+              curl -v "http://localhost:8000/api/papers/search?q=graph+neural+networks&max_results=2"
 
       - name: Full ingest + extraction pipeline
         run: |
